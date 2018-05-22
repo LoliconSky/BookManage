@@ -39,7 +39,20 @@ public class BookpicServlet extends HttpServlet {
         } else if (method == null) {
             // 图片异步上传
             addPic(request, response);
+        } else if ("setFM".equals(method)) {
+            setFM(request, response);
         }
+    }
+
+    private void setFM(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String id = request.getParameter("id");
+        String bookid = request.getParameter("bookid");
+
+        // 这本书所有的封面设为 0
+        bookpicService.updateResetFM(bookid);
+        bookpicService.updateFM(id, "1");
+
+        response.getWriter().print("{\"flag\":\"suc\"}");
     }
 
     private void addPic(HttpServletRequest request, HttpServletResponse response) throws ServletException {

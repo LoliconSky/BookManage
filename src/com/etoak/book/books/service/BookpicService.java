@@ -40,4 +40,12 @@ public class BookpicService {
     public int removeBookpicByBookId(String bid) {
         return dao.removeBookpicByBookId(bid);
     }
+
+    public void updateResetFM(String bookid) {
+        dao.updateResetFM(bookid);
+    }
+
+    public void updateFM(String id, String status) {
+        dao.updateFM(id, status);
+    }
 }

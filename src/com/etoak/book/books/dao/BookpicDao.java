@@ -20,4 +20,8 @@ public interface BookpicDao {
     int removeBookpicById(String id);
 
     int removeBookpicByBookId(String bid);
+
+    void updateResetFM(String bookid);
+
+    void updateFM(String id, String status);
 }

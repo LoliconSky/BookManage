@@ -14,11 +14,12 @@ import java.util.List;
  * Created by 冰封承諾Andy on 2018/5/19.
  */
 public class BookpicDaoImpl implements BookpicDao {
+    private QueryRunner qr = new QueryRunner(CF.getDataSource());
+
     @Override
     public int addBookPic(Bookpic bookpic) {
         String sql = "insert into bookpic values (?,?,?,?,?)";
         try {
-            QueryRunner qr = new QueryRunner(CF.getDataSource());
             return qr.update(sql, CommonsUtils.getUUIDTo32(), bookpic.getSavepath(),
                     bookpic.getShowname(), bookpic.getBookid(), bookpic.getFm());
         } catch (SQLException e) {
@@ -31,7 +32,6 @@ public class BookpicDaoImpl implements BookpicDao {
     public List<Bookpic> getAll() {
         String sql = "select * from bookpic";
         try {
-            QueryRunner qr = new QueryRunner(CF.getDataSource());
             return qr.query(sql, new BeanListHandler<>(Bookpic.class));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -43,7 +43,6 @@ public class BookpicDaoImpl implements BookpicDao {
     public Bookpic getBookpicById(String id) {
         String sql = "select * from bookpic where id=?";
         try {
-            QueryRunner qr = new QueryRunner(CF.getDataSource());
             return qr.query(sql, new BeanHandler<>(Bookpic.class), id);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -55,7 +54,6 @@ public class BookpicDaoImpl implements BookpicDao {
     public List<Bookpic> getBookpicByBookId(String bid) {
         String sql = "select * from bookpic where bookid=?";
         try {
-            QueryRunner qr = new QueryRunner(CF.getDataSource());
             return qr.query(sql, new BeanListHandler<>(Bookpic.class), bid);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -67,7 +65,6 @@ public class BookpicDaoImpl implements BookpicDao {
     public int removeBookpicById(String id) {
         String sql = "delete from bookpic where id=?";
         try {
-            QueryRunner qr = new QueryRunner(CF.getDataSource());
             return qr.update(sql, id);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,11 +76,31 @@ public class BookpicDaoImpl implements BookpicDao {
     public int removeBookpicByBookId(String bid) {
         String sql = "delete from bookpic where bookid=?";
         try {
-            QueryRunner qr = new QueryRunner(CF.getDataSource());
             return qr.update(sql, bid);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
+
+    @Override
+    public void updateResetFM(String bookid) {
+        String sql = "update bookpic set fm='0' where bookid=?";
+        try {
+            qr.update(sql, bookid);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateFM(String id, String status) {
+        String sql = "update bookpic set fm=? where id=?";
+        try {
+            qr.update(sql, status,id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

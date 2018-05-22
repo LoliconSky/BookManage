@@ -51,6 +51,8 @@
     <button type="button" class="btn btn-success" style="margin-bottom: 15px;" onclick="changeStatus('sj')">上架</button>
     <button type="button" class="btn btn-info" style="margin-bottom: 15px;" onclick="changeStatus('xj')">下架</button>
     <button type="button" class="btn btn-danger" style="margin-bottom: 15px;" onclick="delSelect()">删除选中</button>
+    <button type="button" class="btn btn-primary" style="margin-bottom: 15px;" onclick="export2Excel()">导出Excel</button>
+
     <table class="table table-bordered table-hover table-striped">
         <tr>
             <th>
@@ -364,7 +366,7 @@
                             "  <div class='thumbnail'>" +
                             "    <img src='${pageContext.request.contextPath}" + e.savepath + "'>" +
                             "    <div class='caption'>" +
-                            "      <button type='button' class='btn btn-primary'>设置封面</button>" +
+                            "      <button type='button' class='btn btn-" + (e.fm === '1' ? 'success' : 'primary') + "'onclick=\"setFM('" + e.id + "')\">设置封面</button>" +
                             "      <button type='button' class='btn btn-danger' onclick=\"delPicById('" + e.id + "')\">删除</button>" +
                             "    </div>" +
                             "  </div>" +
@@ -399,7 +401,7 @@
                 url: "${pageContext.request.contextPath}/BookpicServlet",
                 // 上传控件的 ID
                 fileElementId: "pic",
-                data: {"bookid":bookid},
+                data: {"bookid": bookid},
                 dataType: "json",
                 success: function (data) {
                     if (data.flag == 'suc') {
@@ -407,6 +409,19 @@
                     }
                 }
             })
+        }
+
+        function setFM(id) {
+            $.post("${pageContext.request.contextPath}/BookpicServlet",
+                "method=setFM&id=" + id + "&bookid=" + bookid, function (data) {
+                    if (data.flag == 'suc') {
+                        queryBookInfo(null, bookid);
+                    }
+                }, "json");
+        }
+
+        function export2Excel() {
+            window.location.href = "BookServlet?method=export" + para_g;
         }
 
         function formatDate(nowStr) {
