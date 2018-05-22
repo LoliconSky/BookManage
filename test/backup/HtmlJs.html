@@ -1,0 +1,42 @@
+<div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="status" value="0" onclick="isSJ(this)"> 是否上架
+            </label>
+        </div>
+    </div>
+</div>
+
+<script>
+    function isSJ(e) {
+        e.value = e.checked ? '1' : '0';
+    }
+
+    function splice(array) {
+        var result = [];
+        $.each(array, function (index, e) {
+            result.push(e.name + "=" + e.value);
+            result.push("&");
+        });
+
+        result.pop();
+        return result.join('').toString();
+    }
+</script>
+
+
+<--<c:forEach varStatus="status" var="book" items="${requestScope.books}">
+    <tr>
+        <td>${status.count}</td>
+        <td>${book.name}</td>
+        <td>${book.price}</td>
+        <td>${book.author}</td>
+        <td>${book.publishdate}</td>
+        <td>${book.category.name}</td>
+        <td>${book.status == "0"?"下架":"上架"}</td>
+        <td>
+            <button type="button" onclick="del('${book.id}')" class="btn btn-danger">删除</button>
+        </td>
+    </tr>
+</c:forEach>-->
