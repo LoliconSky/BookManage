@@ -7,19 +7,10 @@ public class Bookpic {
     private String id;
     private String savepath;
     private String showname;
-    private Book book;
     private String bookid;
     private String fm;
 
     public Bookpic() {
-    }
-
-    public Bookpic(String id, String savepath, String showname, String bookid, String fm) {
-        this.id = id;
-        this.savepath = savepath;
-        this.showname = showname;
-        this.bookid = bookid;
-        this.fm = fm;
     }
 
     public String getBookid() {
@@ -54,13 +45,6 @@ public class Bookpic {
         this.showname = showname;
     }
 
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
-    }
 
     public String getFm() {
         return fm;
@@ -76,7 +60,6 @@ public class Bookpic {
                 "id='" + id + '\'' +
                 ", savepath='" + savepath + '\'' +
                 ", showname='" + showname + '\'' +
-                ", book=" + book +
                 ", bookid='" + bookid + '\'' +
                 ", fm='" + fm + '\'' +
                 '}';

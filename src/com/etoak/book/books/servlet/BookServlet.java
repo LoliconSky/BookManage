@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -33,30 +35,56 @@ public class BookServlet extends HttpServlet {
         response.setContentType("text/plain; charset=UTF-8");
 
         String method = request.getParameter("method");
-        if ("add".equals(method)) {
-            addBook(request, response);
-        } else if ("getList".equals(method)) {
-            getAllBook(request, response);
-        } else if ("getListPage".equals(method)) {
-            getBookPage(request, response);
-        } else if ("del".equals(method)) {
-            delBook(request, response);
-        } else if ("delSome".equals(method)) {
-            delSomeBook(request, response);
-        } else if (null == method) {
+        if (null == method) {
             // 带文件的添加
             addBookAndPic(request, response);
+            return;
         } else if ("sj".equals(method)) {
             changeStatus(request, response, "1");
+            return;
         } else if ("xj".equals(method)) {
             changeStatus(request, response, "0");
+            return;
         }
 
+        // 获得当前类的 class 文件
+        Class clazz = this.getClass();
+        try {
+            // 寻找指定名字和参数的方法
+            Method m = clazz.getDeclaredMethod(method, HttpServletRequest.class, HttpServletResponse.class);
+            // 执行方法
+            m.invoke(this, request, response);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void queryBookById(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String id = request.getParameter("id");
+        Book book = bookService.getBookById(id);
+
+        BookpicService bookpicService = new BookpicService();
+        book.setBps(bookpicService.getBookpicByBookId(id));
+
+        JSONObject jsonObject = JSONObject.fromObject(book);
+        response.getWriter().print(jsonObject);
     }
 
     private void changeStatus(HttpServletRequest request, HttpServletResponse response, String status) throws IOException {
         String[] ids = request.getParameterValues("id");
         int flag = bookService.updateStatus(ids, status);
+
+        if (flag == 0) {
+            response.getWriter().print("操作失败！");
+        } else {
+            response.getWriter().print("操作成功！");
+        }
+    }
+
+    private void delSome(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String[] ids = request.getParameterValues("id");
+        int flag = bookService.removeSomeBook(ids);
 
         if (flag == 0) {
             response.getWriter().print("删除失败！");
@@ -65,10 +93,14 @@ public class BookServlet extends HttpServlet {
         }
     }
 
-    private void delSomeBook(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String[] ids = request.getParameterValues("id");
-        int flag = bookService.removeSomeBook(ids);
-
+    @Deprecated
+    private void delBook(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String id = request.getParameter("id");
+        if (CommonsUtils.isEmpty(id)) {
+            response.getWriter().print("删除失败！");
+            return;
+        }
+        int flag = bookService.removeBookById(id);
         if (flag == 0) {
             response.getWriter().print("删除失败！");
         } else {
@@ -137,20 +169,10 @@ public class BookServlet extends HttpServlet {
         }
     }
 
-    private void delBook(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String id = request.getParameter("id");
-        if (CommonsUtils.isEmpty(id)) {
-            response.getWriter().print("删除失败！");
-            return;
-        }
-        int flag = bookService.removeBookById(id);
-        if (flag == 0) {
-            response.getWriter().print("删除失败！");
-        } else {
-            response.getWriter().print("删除成功！");
-        }
-    }
-
+    /**
+     * 获取全部的列表，并且采用的是递归查询，效率极低，不建议使用
+     */
+    @Deprecated
     private void getAllBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // List<Book> bookList = bookService.getAllBook();
         List<Book> bookList = bookService.getAllBookAndCategory();
@@ -159,21 +181,25 @@ public class BookServlet extends HttpServlet {
         response.getWriter().print(jsonArray);
     }
 
-    private void getBookPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void getListPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Page<Book> page = new Page<>();
         int pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
+        String paraName = request.getParameter("name");
+        String caid = request.getParameter("caid");
+
         page.setPageNumber(pageNumber);
 
-        int total = bookService.getBookCount();
+        int total = bookService.getBookCount(paraName, caid);
         page.setTotal(total);
 
-        List<Book> bookList = bookService.getAllBookAndCategoryPage(page.getStart(), page.getPageSize());
+        List<Book> bookList = bookService.getBookAndCategoryPage(page.getStart(), page.getPageSize(), paraName, caid);
         page.setRows(bookList);
 
         JSONObject jsonObject = JSONObject.fromObject(page);
         response.getWriter().print(jsonObject);
     }
 
+    @Deprecated
     private void addBook(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name");
         String price = request.getParameter("price");

@@ -16,12 +16,17 @@ public class BookpicService {
         return dao.addBookPic(bookpic);
     }
 
+    @Deprecated
     public List<Bookpic> getAllBookPic() {
         return dao.getAll();
     }
 
     public Bookpic getBookpicById(String id) {
         return dao.getBookpicById(id);
+    }
+
+    public List<Bookpic> getBookpicByBookId(String bid) {
+        return dao.getBookpicByBookId(bid);
     }
 
     public int removeBookpic(Bookpic bookpic) {
@@ -34,9 +39,5 @@ public class BookpicService {
 
     public int removeBookpicByBookId(String bid) {
         return dao.removeBookpicByBookId(bid);
-    }
-
-    public List<Bookpic> getBookpicByBookId(String bid) {
-        return dao.getBookpicByBookId(bid);
     }
 }

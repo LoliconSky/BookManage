@@ -1,6 +1,7 @@
 package com.etoak.book.books.po;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 冰封承諾Andy on 2018/5/19.
@@ -14,6 +15,7 @@ public class Book {
     private Category category;
     private String categoryid;
     private String status;
+    private List<Bookpic> bps;
 
     public Book() {
     }
@@ -26,6 +28,14 @@ public class Book {
         this.publishdate = publishdate;
         this.categoryid = categoryid;
         this.status = status;
+    }
+
+    public List<Bookpic> getBps() {
+        return bps;
+    }
+
+    public void setBps(List<Bookpic> bps) {
+        this.bps = bps;
     }
 
     public String getCategoryid() {

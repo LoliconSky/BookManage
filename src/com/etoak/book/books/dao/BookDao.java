@@ -14,13 +14,17 @@ public interface BookDao {
 
     Book getBookById(String id);
 
+    // TODO 应该使用可变参或者 Map 多个拼接
+    List<Book> getPage(int index, int max);
+
+    // TODO 应该使用可变参或者 Map 多个拼接
+    List<Book> getBookAndCategoryPage(int start, int pageSize, String name, String caid);
+
+    int getCount(String name, String caid);
+
     int removeBookById(String id);
 
     int removeBookByName(String name);
-
-    List<Book> getPage(int index, int max);
-
-    int getCount();
 
     int removeBookByIds(String[] ids);
 

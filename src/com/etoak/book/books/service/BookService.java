@@ -23,8 +23,7 @@ public class BookService {
         return dao.getAll();
     }
 
-
-
+    @Deprecated
     public List<Book> getAllBookAndCategory() {
         CategoryService categoryService = new CategoryService();
         List<Book> bookList = dao.getAll();
@@ -37,16 +36,33 @@ public class BookService {
         return bookList;
     }
 
+    public List<Book> getBookAndCategoryPage(int start, int pageSize, String name, String caid) {
+        return dao.getBookAndCategoryPage(start, pageSize, name, caid);
+    }
+
+    public List<Book> getPage(int index, int max) {
+        return dao.getPage(index, max);
+    }
+
+
+    public Book getBookById(String id) {
+        return dao.getBookById(id);
+    }
+
+    public int getBookCount(String name, String caid) {
+        return dao.getCount(name,caid);
+    }
+
+    public int removeBook(Book book) {
+        return removeBookById(book.getId());
+    }
+
     public int removeBookById(String id) {
         return dao.removeBookById(id);
     }
 
     public int removeBookByName(String name) {
         return dao.removeBookByName(name);
-    }
-
-    public List<Book> getPage(int index, int max) {
-        return dao.getPage(index, max);
     }
 
     public int removeBookAndPic(Book book) {
@@ -56,25 +72,6 @@ public class BookService {
         return removeBookById(book.getId());
     }
 
-    public int removeBook(Book book) {
-        return removeBookById(book.getId());
-    }
-
-    public int getBookCount() {
-        return dao.getCount();
-    }
-
-    public List<Book> getAllBookAndCategoryPage(int start, int pageSize) {
-        CategoryService categoryService = new CategoryService();
-        List<Book> bookList = dao.getPage(start, pageSize);
-
-        bookList.forEach(book -> {
-            Category category = categoryService.getCategoryById(book.getCategoryid());
-            book.setCategory(category);
-        });
-        return bookList;
-    }
-
     public int removeSomeBook(String[] ids) {
         return dao.removeBookByIds(ids);
     }
@@ -82,4 +79,5 @@ public class BookService {
     public int updateStatus(String[] ids, String status) {
         return dao.updateStatus(ids, status);
     }
+
 }
